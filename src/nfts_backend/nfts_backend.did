@@ -1,0 +1,79 @@
+type LogoExtension = variant {
+    Png;
+    Jpg;
+    Jpeg;
+};
+
+type Logo = record {
+    extension : LogoExtension;
+    data : vec nat8;
+};
+
+type Interface = variant {
+    Approval;
+    Burn;
+    TransferNotification;
+};
+
+type InsertCollection = record {
+    name : text;
+    logo : Logo;
+    symbol : text;
+}
+
+service : {
+    insert_collection : (InsertCollection) -> (nat64);
+    # collection_id, name
+    set_name_of_collection : (nat64, text) -> ();
+
+    # collection_id, symbol
+    set_symbol_of_collection : (nat64, text) -> ();
+
+    # collection_id, logo
+    set_logo_of_collection : (nat64, Logo) -> ();
+
+    # collection_id
+    name_of_collection : (nat64) -> (opt text) query;
+
+    # collection_id
+    symbol_of_collection : (nat64) -> (opt text) query;
+
+    # collection_id
+    logo_of_collection : (nat64) -> (opt Logo) query;
+
+    # collection_id, principal
+    balance_of_user : (nat64, principal) -> (nat64) query;
+
+    # collection_id, token_id
+    owner_of_nft : (nat64, nat64) -> (opt principal) query;
+
+    # collection_id, token_id, from, to
+    transfer_from_to : (nat64, nat64, principal, principal) -> (nat128);
+
+    supported_interfaces : () -> (vec Interface) query;
+    total_supply : () -> (nat64) query;
+    
+    # collection_id
+    total_supply_of_collection : (nat64) -> (opt nat64) query;
+
+    # collection_id, custodian
+    insert_custodian_into_collection : (nat64, principal) -> (bool);
+
+    # collection_id, custodian
+    remove_custodian_from_collection : (nat64, principal) -> (bool);
+
+    # collection_id, custodian
+    is_custodian_of_collection : (nat64, principal) -> (bool) query;
+
+    # collection_id, token_id, user
+    approve : (nat64, nat64, principal) -> (nat128);
+
+    # collection_id, operator, is_approved
+    set_approval_for_all : (nat64, principal, bool) -> (u128);
+
+    # collection_id, operator
+    is_approved_for_all : (nat64, principal) -> (bool) query;
+
+    # collection_id, token_id
+    burn : (nat64, nat64) -> (nat128);
+}
